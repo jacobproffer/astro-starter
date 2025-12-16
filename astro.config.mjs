@@ -7,11 +7,26 @@ import sitemap from "@astrojs/sitemap";
 export default defineConfig({
   site: "https://www.example.com",
   integrations: [sitemap()],
-  vite: { plugins: [tailwindcss()], },
-  experimental: {
-    responsiveImages: true,
-    svg: {
-      mode: 'sprite',
+  // Image optimization configuration
+  image: {
+    service: {
+      entrypoint: 'astro/assets/services/sharp'
+    },
+  },
+  // Security and performance optimizations
+  security: {
+    checkOrigin: true,
+  },
+  vite: {
+    plugins: [tailwindcss()], build: {
+      // Improve build performance
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            vendor: ['astro'],
+          },
+        },
+      },
     },
   },
 });
