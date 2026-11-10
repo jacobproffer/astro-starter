@@ -1,1 +1,84 @@
-<nav aria-label="primary"></nav>
+---
+import { navLinks } from "../site.config";
+
+/** Compare paths ignoring trailing slashes, so /about and /about/ match. */
+const normalize = (path: string) => path.replace(/\/+$/, "") || "/";
+const currentPath = normalize(Astro.url.pathname);
+---
+
+<!--
+  Progressive enhancement: without JavaScript the links are always visible.
+  The script reveals the toggle and collapses the list on small screens.
+-->
+<nav aria-label="Primary" class="primary-nav max-md:w-full md:w-auto" data-menu="open">
+  <button
+    type="button"
+    class="primary-nav-toggle cursor-pointer md:hidden"
+    aria-expanded="true"
+    aria-controls="primary-nav-list"
+    hidden
+  >
+    Menu
+  </button>
+  <ul
+    id="primary-nav-list"
+    class="flex flex-col gap-2 max-md:mt-4 md:flex-row md:gap-6"
+  >
+    {
+      navLinks.map(({ label, href }) => (
+        <li>
+          <a
+            href={href}
+            aria-current={normalize(href) === currentPath ? "page" : undefined}
+            class="underline-offset-4 hover:underline aria-[current=page]:font-semibold aria-[current=page]:underline"
+          >
+            {label}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<style>
+  @media (width < 48rem) {
+    .primary-nav[data-menu="closed"] ul {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  for (const nav of document.querySelectorAll<HTMLElement>(".primary-nav")) {
+    const toggle = nav.querySelector<HTMLButtonElement>(".primary-nav-toggle");
+    if (!toggle) continue;
+
+    const setOpen = (open: boolean) => {
+      nav.dataset.menu = open ? "open" : "closed";
+      toggle.setAttribute("aria-expanded", String(open));
+    };
+
+    toggle.hidden = false;
+    setOpen(false);
+
+    toggle.addEventListener("click", () => {
+      setOpen(toggle.getAttribute("aria-expanded") !== "true");
+    });
+
+    // Escape closes the menu and returns focus to the toggle.
+    nav.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && nav.dataset.menu === "open") {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+
+    // Close when focus or a click moves outside the nav.
+    nav.addEventListener("focusout", (event) => {
+      if (!nav.contains(event.relatedTarget as Node | null)) setOpen(false);
+    });
+    document.addEventListener("click", (event) => {
+      if (!nav.contains(event.target as Node)) setOpen(false);
+    });
+  }
+</script>

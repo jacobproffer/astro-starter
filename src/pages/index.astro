@@ -1,7 +1,9 @@
 ---
 import BaseLayout from "@layouts/BaseLayout.astro";
 import Hero from "@components/Hero.astro";
-const pageTitle = "Astro Starter";
+import { site } from "../site.config";
+
+const pageTitle = site.name;
 ---
 
 <BaseLayout pageTitle={pageTitle}>
