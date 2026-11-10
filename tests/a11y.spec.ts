@@ -4,6 +4,7 @@ import AxeBuilder from "@axe-core/playwright";
 // Add new routes here as the site grows.
 const pages = [
   { name: "Home", path: "/" },
+  { name: "About", path: "/about" },
   { name: "404", path: "/404" },
 ];
 

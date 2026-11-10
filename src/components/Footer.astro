@@ -1,1 +1,26 @@
-<footer></footer>
+---
+import Container from "@components/Container.astro";
+import { navLinks, site } from "../site.config";
+
+const year = new Date().getFullYear();
+---
+
+<footer class="mt-16 py-8 text-sm">
+  <Container class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+    <nav aria-label="Footer">
+      <ul class="flex flex-wrap gap-x-6 gap-y-2">
+        {
+          navLinks.map(({ label, href }) => (
+            <li>
+              <a href={href} class="underline-offset-4 hover:underline">
+                {label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <p>&copy; {year} {site.name}</p>
+    <slot />
+  </Container>
+</footer>
